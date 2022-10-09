@@ -2,12 +2,12 @@ version: 0.2
 
 env:
   variables:
-    TERRAFORM_VERSION: "0.15.3"
+    TERRAFORM_VERSION: "1.3.2"
     TF_COMMAND: "apply"
     #TF_COMMAND: "destroy"
   parameter-store:
-    AWS_ACCESS_KEY_ID: "/CodeBuild/MY_AWS_ACCESS_KEY_ID"
-    AWS_SECRET_ACCESS_KEY: "/CodeBuild/MY_AWS_SECRET_ACCESS_KEY"
+    AWS_ACCESS_KEY_ID: "/codebuild/my_aws_access_key_id"
+    AWS_SECRET_ACCESS_KEY: "/codebuild/my_aws_secrete_access_key"
 
 phases:
   install:
@@ -27,17 +27,14 @@ phases:
     on-failure: ABORT   
     commands:
     # Project-1: AWS VPC, ASG, ALB, Route53, ACM, Security Groups and SNS 
-      - cd "$CODEBUILD_SRC_DIR/terraform-manifests"
-      - ls -lrt "$CODEBUILD_SRC_DIR/terraform-manifests"
+      - cd "$CODEBUILD_SRC_DIR/"
+      - ls -lrt "$CODEBUILD_SRC_DIR/"
       - terraform --version
       - terraform init -input=false --backend-config=dev.conf
       - terraform validate
-      - terraform plan -lock=false -input=false -var-file=dev.tfvars           
-      - terraform $TF_COMMAND -input=false -var-file=dev.tfvars -auto-approve  
+      - terraform plan -lock=false -input=false -var-file=Dev.tfvars           
+      - terraform $TF_COMMAND -input=false -var-file=Dev.tfvars -auto-approve  
   post_build:
     on-failure: CONTINUE   
     commands:
       - echo terraform execution completed on `date`      
-
-
-    
